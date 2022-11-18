@@ -1,0 +1,6 @@
+micronaut:
+  application:
+    name: cloudassignmentapp
+
+application:
+  quoteApiUrl: http://quotes.stormconsultancy.co.uk
