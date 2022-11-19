@@ -2,7 +2,9 @@ package com.meesvanstraten.repositories;
 
 import com.meesvanstraten.configuration.Properties;
 import com.meesvanstraten.entities.QuoteEntity;
+import io.micronaut.core.annotation.ReflectiveAccess;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
@@ -12,9 +14,12 @@ import java.util.Map;
 
 public class QuoteRepository {
 	@Inject
-	private DynamoDbClient dynamoDbClient;
+	@ReflectiveAccess
+	DynamoDbClient dynamoDbClient;
 	@Inject
-	private Properties properties;
+	@ReflectiveAccess
+	Properties properties;
+
 
 
 	public Map<String, AttributeValue> getQuoteById(String id){
@@ -43,7 +48,7 @@ public class QuoteRepository {
 			PutItemResponse response =  dynamoDbClient.putItem(req);
 			if(response.sdkHttpResponse().isSuccessful()) return true;
 		}
-		catch (ResourceNotFoundException e){
+		catch (DynamoDbException e ){
 		}
 		return false;
 	}

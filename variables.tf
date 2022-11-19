@@ -15,7 +15,7 @@ variable "lambda_name" {
 }
 
 variable "handler" {
-  default = "com.meesvanstraten.functions.RandomQuoteFunctionHandler"
+  default = "io.micronaut.function.aws.proxy.MicronautLambdaHandler"
 }
 
 variable "file_name" {

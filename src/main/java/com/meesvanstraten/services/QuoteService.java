@@ -7,10 +7,12 @@ import com.meesvanstraten.configuration.Properties;
 import com.meesvanstraten.dto.QuoteDto;
 import com.meesvanstraten.entities.QuoteEntity;
 import com.meesvanstraten.repositories.QuoteRepository;
+import io.micronaut.core.annotation.ReflectiveAccess;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.uri.UriBuilder;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 
@@ -20,12 +22,16 @@ import java.util.Map;
 
 public class QuoteService {
 	@Inject
-	private Properties properties;
+	@ReflectiveAccess
+	Properties properties;
 	@Inject
-	private HttpClient httpClient;
+	@ReflectiveAccess
+	HttpClient httpClient;
 	@Inject
-	private QuoteRepository quoteRepository;
+	@ReflectiveAccess
+	 QuoteRepository quoteRepository;
 	@Inject
+	@ReflectiveAccess
 	ObjectMapper mapper;
 
 	public boolean addQuote(QuoteDto quoteDto){

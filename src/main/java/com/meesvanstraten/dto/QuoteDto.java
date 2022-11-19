@@ -3,6 +3,7 @@ package com.meesvanstraten.dto;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.NonNull;
 
 import javax.validation.constraints.NotBlank;
@@ -10,6 +11,10 @@ import javax.validation.constraints.NotBlank;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class QuoteDto {
 
+	public QuoteDto( @JsonProperty("quote")@NonNull String quote, @JsonProperty("author") @NonNull String author) {
+		this.quote = quote;
+		this.author = author;
+	}
 
 	@NonNull
 	@NotBlank
@@ -21,10 +26,7 @@ public class QuoteDto {
 	@JsonAlias("author")
 	private String author;
 
-	public QuoteDto( @JsonProperty("quote")@NonNull String quote, @JsonProperty("author") @NonNull String author) {
-		this.quote = quote;
-		this.author = author;
-	}
+
 
 
 	@NonNull

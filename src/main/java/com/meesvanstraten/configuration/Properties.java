@@ -6,7 +6,6 @@ import io.micronaut.context.annotation.Configuration;
 import io.micronaut.context.annotation.Value;
 import jakarta.inject.Singleton;
 
-@Bean
 public class Properties {
 	@Value("${application.quoteApiUrl}")
 	public String quoteApiUrl;
@@ -15,8 +14,5 @@ public class Properties {
 
 	public String getQuoteApiUrl(){
 		return  quoteApiUrl;
-	}
-	public void setQuoteApiUrl(String quoteApiUrl){
-		this.quoteApiUrl = quoteApiUrl;
 	}
 }

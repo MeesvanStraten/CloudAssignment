@@ -1,19 +1,19 @@
 package com.meesvanstraten.controllers;
 import com.meesvanstraten.dto.QuoteDto;
 import com.meesvanstraten.services.QuoteService;
+import io.micronaut.core.annotation.ReflectiveAccess;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.management.endpoint.annotation.Endpoint;
 import jakarta.inject.Inject;
 
 
 @Controller
-//@Endpoint(value = "Quote",defaultEnabled = true)
 public class QuoteController {
     @Inject
-    private QuoteService quoteService;
+    @ReflectiveAccess
+    QuoteService quoteService;
 
 
     @Get

@@ -13,13 +13,6 @@ resource "aws_dynamodb_table" "basic-dynamodb-table" {
   }
 
 
-
-  ttl {
-    attribute_name = "TimeToExist"
-    enabled        = false
-  }
-
-
   tags = {
     Name        = "dynamodb-table-quotes"
   }
@@ -33,6 +26,7 @@ resource "aws_lambda_function" "get_random_quote_lambda" {
   handler = var.handler
   source_code_hash = filebase64sha256(var.file_name)
   runtime = var.lambda_runtime
+
 }
 
 resource "aws_lambda_function_url" "create_function_url" {
