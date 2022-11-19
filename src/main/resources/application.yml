@@ -1,6 +1,15 @@
 micronaut:
+
   application:
     name: cloudassignmentapp
 
 application:
   quoteApiUrl: http://quotes.stormconsultancy.co.uk
+  dynamodb:
+    table-name: 'Quotes'
+
+
+endpoints:
+  routes:
+    enabled: true
+    sensitive: false

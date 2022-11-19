@@ -1,23 +1,41 @@
 package com.meesvanstraten.controllers;
+import com.meesvanstraten.dto.QuoteDto;
 import com.meesvanstraten.services.QuoteService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.management.endpoint.annotation.Endpoint;
 import jakarta.inject.Inject;
 
-import java.util.Collections;
-import java.util.Map;
 
 @Controller
+//@Endpoint(value = "Quote",defaultEnabled = true)
 public class QuoteController {
     @Inject
-    QuoteService quoteService;
+    private QuoteService quoteService;
+
 
     @Get
-    public HttpResponse<String> get() {
-        String quote = quoteService.getRandomQuoteFromApi();
-        if(quote != null) return HttpResponse.ok().body(quote);
+    public HttpResponse get(String id) {
+        QuoteDto quote = quoteService.getQuoteById(id);
+        if( quote != null) return HttpResponse.ok().body(quote);
 
-        return HttpResponse.noContent().body("Could not find quote");
+        return HttpResponse.notFound().body("Could not find quote by this id");
+    }
+
+    @Get("/random")
+    public HttpResponse getRandomFromExternalApi() {
+        QuoteDto quote = quoteService.getRandomQuoteFromApi();
+        if( quote != null) return HttpResponse.ok().body(quote);
+
+        return HttpResponse.notFound().body("Could not get quote from external api");
+    }
+
+    @Post
+    public HttpResponse getRandomFromExternalApi(QuoteDto quoteDto) {
+        if( quoteService.addQuote(quoteDto)) return HttpResponse.created("Created quote");
+
+        return HttpResponse.badRequest().body("Could not create quote");
     }
 }

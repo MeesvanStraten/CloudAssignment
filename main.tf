@@ -2,6 +2,29 @@ provider "aws" {
   region = var.aws_region
 }
 
+resource "aws_dynamodb_table" "basic-dynamodb-table" {
+  name           = "Quotes"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "id"
+
+  attribute {
+    name = "id"
+    type = "S"
+  }
+
+
+
+  ttl {
+    attribute_name = "TimeToExist"
+    enabled        = false
+  }
+
+
+  tags = {
+    Name        = "dynamodb-table-quotes"
+  }
+}
+
 
 resource "aws_lambda_function" "get_random_quote_lambda" {
   filename = var.file_name

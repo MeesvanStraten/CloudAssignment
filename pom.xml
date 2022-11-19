@@ -32,6 +32,28 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.github.ksuid</groupId>
+      <artifactId>ksuid</artifactId>
+      <scope>compile</scope>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.aws</groupId>
+      <artifactId>micronaut-aws-sdk-v2</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-http-server-netty</artifactId>
+      <version>3.7.4</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>dynamodb</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-inject</artifactId>
       <scope>compile</scope>
@@ -66,7 +88,11 @@
       <artifactId>micronaut-jackson-databind</artifactId>
       <scope>compile</scope>
     </dependency>
-    <dependency>
+      <dependency>
+          <groupId>io.micronaut</groupId>
+          <artifactId>micronaut-management</artifactId>
+      </dependency>
+      <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <scope>runtime</scope>
