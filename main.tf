@@ -2,13 +2,30 @@ provider "aws" {
   region = var.aws_region
 }
 
+resource "aws_iam_role_policy" "lambda_policy" {
+  name = "lambda_policy"
+  role = aws_iam_role.role_for_LDC.id
+
+  policy = file("policy.json")
+}
+
+
+resource "aws_iam_role" "role_for_LDC" {
+  name = "myrole"
+
+  assume_role_policy = file("assume_role_policy.json")
+
+}
+
 resource "aws_lambda_function" "get_random_quote_lambda" {
   filename = var.file_name
   function_name = var.lambda_name
-  role = var.role_arn
+  role = aws_iam_role.role_for_LDC.arn
   handler = var.handler
   source_code_hash = filebase64sha256(var.file_name)
   runtime = var.lambda_runtime
+
+
 
 }
 
