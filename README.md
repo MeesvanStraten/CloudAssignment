@@ -1,43 +1,51 @@
-## Micronaut 3.7.4 Documentation
+## README
 
-- [User Guide](https://docs.micronaut.io/3.7.4/guide/index.html)
-- [API Reference](https://docs.micronaut.io/3.7.4/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/3.7.4/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
----
+## Tech used
+- Micronaut
+  - Micronaut AWS Lambda
+- GraalVM
+- AWS DynamoDB
+- AWS API Gateway
+- Terraform
 
-## Handler
+## How to run
+GraalVM is used on the Lambda, but locally you can use any JDK starting from version 8. With Intellij create a new `Micronaut configuration` and select the `src/main/java/com/meesvanstraten/Application.java` as startup class.
 
-[AWS Lambda Handler](https://docs.aws.amazon.com/lambda/latest/dg/java-handler.html)
+### Build
+Run ` ./mvnw package -Dpackaging=docker-native -Dmicronaut.runtime=lambda -Pgraalvm -e`to package the application as a GraalVM native image. 
+A `.Zip` file will be created in the following directory `./target/function.zip`.
 
-Handler: io.micronaut.function.aws.proxy.MicronautLambdaHandler
-
-
-## Deployment with GraalVM
-
-If you want to deploy to AWS Lambda as a GraalVM native image, run:
-
-```bash
-./mvnw package -Dpackaging=docker-native -Dmicronaut.runtime=lambda -Pgraalvm
-```
-
-This will build the GraalVM native image inside a docker container and generate the `function.zip` ready for the deployment.
+### Deploy
+The `main.tf` contains the instructions to provision the following:
+- DynamoDB table for storing quotes.
+- Lambda function with custom runtime to run the GraalVM application.
+- AWS REST API Gateway for invoking Lambda.
 
 
-## Feature aws-lambda documentation
-
-- [Micronaut AWS Lambda Function documentation](https://micronaut-projects.github.io/micronaut-aws/latest/guide/index.html#lambda)
+  Run `Terraform apply` to provision the Lambda and DynamoDB, this will also upload the `.Zip` file created in the previous step to the lambda.
 
 
-## Feature http-client documentation
 
-- [Micronaut HTTP Client documentation](https://docs.micronaut.io/latest/guide/index.html#httpClient)
+### Use API
+On the following path the API is available: `<GeneratedAPIGatewayUrlHere>/prod`.
+The following endpoints are available:
+
+#### `GET /quote/random`
+returns a random quote from external API.
+
+#### `GET /quote/{author}`
+Returns all quotes by author.
+
+#### `POST /quote`
+Post new quote, with as JSON in the body of the request:
+`{"quote":"My cool quote","author":"Your name"}`
 
 
-## Feature aws-lambda-custom-runtime documentation
+### Tests
+The `src/test` folder contains some tests as well.
 
-- [Micronaut Custom AWS Lambda runtime documentation](https://micronaut-projects.github.io/micronaut-aws/latest/guide/index.html#lambdaCustomRuntimes)
 
-- [https://docs.aws.amazon.com/lambda/latest/dg/runtimes-custom.html](https://docs.aws.amazon.com/lambda/latest/dg/runtimes-custom.html)
+
+
 
 

@@ -1,29 +1,82 @@
 package com.meesvanstraten.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.meesvanstraten.configuration.IdGenerator;
 import com.meesvanstraten.configuration.Properties;
-import io.micronaut.context.annotation.Bean;
+import com.meesvanstraten.dto.QuoteDto;
+import com.meesvanstraten.entities.QuoteEntity;
+import com.meesvanstraten.repositories.QuoteRepository;
+import io.micronaut.core.annotation.ReflectiveAccess;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.uri.UriBuilder;
 import jakarta.inject.Inject;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-@Bean
+
 public class QuoteService {
 	@Inject
+	@ReflectiveAccess
 	Properties properties;
-
 	@Inject
-	private HttpClient httpClient;
+	@ReflectiveAccess
+	HttpClient httpClient;
+	@Inject
+	@ReflectiveAccess
+	 QuoteRepository quoteRepository;
+	@Inject
+	@ReflectiveAccess
+	ObjectMapper mapper;
+
+	public boolean addQuote(QuoteDto quoteDto){
+		QuoteEntity quoteEntity = new QuoteEntity(IdGenerator.generate(),quoteDto.getQuote(),quoteDto.getAuthor());
+		return quoteRepository.addQuote(quoteEntity);
+	}
+
+	public List<QuoteDto> getByAuthor(String author){
+		List<Map<String,AttributeValue>> quotes = quoteRepository.getQuotesByAuthor(author);
+		List<QuoteDto> quoteDtos = new ArrayList<>();
+
+		if(quotes != null && quotes.size() > 0){
+			for (Map<String,AttributeValue> item: quotes) {
+				quoteDtos.add(new QuoteDto(item.get("quote").s(),item.get("author").s()));
+			}
+			return quoteDtos;
+		}
+		return null;
+	}
+
+	public QuoteDto getQuoteById(String id){
+		try{
+			Map<String, AttributeValue> valueMap = quoteRepository.getQuoteById(id);
+			QuoteDto quoteDto = new QuoteDto(valueMap.get("quote").s(),valueMap.get("author").s());
+			return quoteDto;
+		}
+		catch (NullPointerException e){}
+
+		return null;
+	}
 
 
-	public String getRandomQuoteFromApi(){
+	public QuoteDto getRandomQuoteFromApi(){
 		URI uri = UriBuilder.of(properties.getQuoteApiUrl().concat("/random.json"))
 						.build();
+
 		HttpRequest request = HttpRequest.GET(uri);
 
-		return httpClient.toBlocking().retrieve(request);
+		String json = httpClient.toBlocking().retrieve(request);
+		try {
+			return mapper.readValue(json,QuoteDto.class);
+		} catch (JsonProcessingException e) {}
+
+		return null;
 	}
 
 }

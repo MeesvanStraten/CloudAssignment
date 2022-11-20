@@ -15,9 +15,13 @@ variable "lambda_name" {
 }
 
 variable "handler" {
-  default = "com.meesvanstraten.functions.RandomQuoteFunctionHandler"
+  default = "io.micronaut.function.aws.proxy.MicronautLambdaHandler"
 }
 
 variable "file_name" {
   default = "./target/function.zip"
+}
+
+variable "gateway_principal" {
+  default = "apigateway.amazonaws.com"
 }
