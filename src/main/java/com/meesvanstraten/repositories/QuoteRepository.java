@@ -4,11 +4,11 @@ import com.meesvanstraten.configuration.Properties;
 import com.meesvanstraten.entities.QuoteEntity;
 import io.micronaut.core.annotation.ReflectiveAccess;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -20,6 +20,26 @@ public class QuoteRepository {
 	@ReflectiveAccess
 	Properties properties;
 
+
+	public List<Map<String, AttributeValue>> getQuotesByAuthor(String author){
+		try{
+			Map<String, AttributeValue> expressionAttributeValues =
+							new HashMap<>();
+			expressionAttributeValues.put(":author", AttributeValue.builder().s(author).build());
+
+
+			ScanRequest scanRequest = ScanRequest.builder().tableName(properties.dynamoDbTable)
+							.filterExpression("(author = :author)")
+							.expressionAttributeValues(expressionAttributeValues)
+							.build();
+
+
+			return dynamoDbClient.scan(scanRequest).items();
+		}
+		catch (DynamoDbException e){
+		}
+		return null;
+	}
 
 
 	public Map<String, AttributeValue> getQuoteById(String id){
@@ -44,7 +64,7 @@ public class QuoteRepository {
 			values.put("quote", AttributeValue.builder().s(quote.getQuote()).build());
 			values.put("author", AttributeValue.builder().s(quote.getAuthor()).build());
 
-			PutItemRequest req = PutItemRequest.builder().item(values).tableName(properties.dynamoDbTable).build();
+			PutItemRequest req = PutItemRequest.builder().item(values).tableName(properties.dynamoDbTable).returnValues(ReturnValue.ALL_OLD).build();
 			PutItemResponse response =  dynamoDbClient.putItem(req);
 			if(response.sdkHttpResponse().isSuccessful()) return true;
 		}

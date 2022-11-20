@@ -21,3 +21,7 @@ variable "handler" {
 variable "file_name" {
   default = "./target/function.zip"
 }
+
+variable "gateway_principal" {
+  default = "apigateway.amazonaws.com"
+}

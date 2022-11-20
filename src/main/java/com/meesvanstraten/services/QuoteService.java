@@ -12,11 +12,12 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.uri.UriBuilder;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -37,6 +38,19 @@ public class QuoteService {
 	public boolean addQuote(QuoteDto quoteDto){
 		QuoteEntity quoteEntity = new QuoteEntity(IdGenerator.generate(),quoteDto.getQuote(),quoteDto.getAuthor());
 		return quoteRepository.addQuote(quoteEntity);
+	}
+
+	public List<QuoteDto> getByAuthor(String author){
+		List<Map<String,AttributeValue>> quotes = quoteRepository.getQuotesByAuthor(author);
+		List<QuoteDto> quoteDtos = new ArrayList<>();
+
+		if(quotes != null && quotes.size() > 0){
+			for (Map<String,AttributeValue> item: quotes) {
+				quoteDtos.add(new QuoteDto(item.get("quote").s(),item.get("author").s()));
+			}
+			return quoteDtos;
+		}
+		return null;
 	}
 
 	public QuoteDto getQuoteById(String id){

@@ -8,6 +8,8 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import jakarta.inject.Inject;
 
+import java.util.List;
+
 
 @Controller
 public class QuoteController {
@@ -16,7 +18,13 @@ public class QuoteController {
     QuoteService quoteService;
 
 
-    @Get
+    @Get("/test")
+    public HttpResponse test() {
+        return HttpResponse.ok().body("Hello from test endpoint");
+    }
+
+
+    @Get("/quote")
     public HttpResponse get(String id) {
         QuoteDto quote = quoteService.getQuoteById(id);
         if( quote != null) return HttpResponse.ok().body(quote);
@@ -24,7 +32,15 @@ public class QuoteController {
         return HttpResponse.notFound().body("Could not find quote by this id");
     }
 
-    @Get("/random")
+    @Get("/quote/{author}")
+    public HttpResponse getByAuthor(String author) {
+        List<QuoteDto> quotes = quoteService.getByAuthor(author);
+        if( quotes != null) return HttpResponse.ok().body(quotes);
+
+        return HttpResponse.notFound().body("Could not find quotes by this author");
+    }
+
+    @Get("/quote/random")
     public HttpResponse getRandomFromExternalApi() {
         QuoteDto quote = quoteService.getRandomQuoteFromApi();
         if( quote != null) return HttpResponse.ok().body(quote);
@@ -32,8 +48,8 @@ public class QuoteController {
         return HttpResponse.notFound().body("Could not get quote from external api");
     }
 
-    @Post
-    public HttpResponse getRandomFromExternalApi(QuoteDto quoteDto) {
+    @Post("/quote")
+    public HttpResponse postQuote(QuoteDto quoteDto) {
         if( quoteService.addQuote(quoteDto)) return HttpResponse.created("Created quote");
 
         return HttpResponse.badRequest().body("Could not create quote");
