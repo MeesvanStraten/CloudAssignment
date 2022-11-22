@@ -17,13 +17,6 @@ public class QuoteController {
     @ReflectiveAccess
     QuoteService quoteService;
 
-
-    @Get("/test")
-    public HttpResponse test() {
-        return HttpResponse.ok().body("Hello from test endpoint");
-    }
-
-
     @Get("/quote")
     public HttpResponse get(String id) {
         QuoteDto quote = quoteService.getQuoteById(id);
